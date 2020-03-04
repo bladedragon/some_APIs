@@ -1,0 +1,21 @@
+spring:
+  redis:
+    database: 0
+    port: 6379
+    jedis:
+      pool:
+        max-active: 20
+        max-wait: 10000ms
+    host: 127.0.0.1
+cqupt:
+  domain: http://jwzx.cqupt.edu.cn
+  term: 2018-2019学年第2学期 #\u0032\u0030\u0031\u0038\u002d\u0032\u0030\u0031\u0039\u5b66\u5e74\u7b2c\u0032\u5b66\u671f
+  term-begin: 1551024000
+  version: 2019.3.21
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+logging:
+  path: /data/log/
+server:
+  port: 8080

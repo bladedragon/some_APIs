@@ -1,0 +1,37 @@
+image: maven:3.3-jdk-8
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=/shared/m2-repos -Dmaven.test.skip=true"
+stages:
+  - build
+  - deploy
+before_script:
+  - ip_host=$(ip route|awk '/default/ { print $3 }')
+  - echo "$ip_host nexus-server" >> /etc/hosts
+jar:
+  stage: build
+  tags:
+    - redrock-maven
+  script:
+    - mvn package
+  artifacts:
+    paths:
+      - target/
+nexus:
+  stage: deploy
+  tags:
+    - redrock-maven
+  script:
+    - mvn deploy
+  when: manual
+docker:
+  stage: deploy
+  when: manual
+  tags:
+    - redrock-maven
+  script:
+    - mkdir -p data
+    - mv target/newapi.jar data/app.jar #这条是把jar移到指定位置，自己修改打包后的jar名字
+    - chmod 700 startup.sh
+    - sh ./startup.sh
+    - tar -C data -cf data.tar .
+    - curl -F data=@data.tar -X POST http://202.202.43.234/rrmsapi/deploy/newapi
